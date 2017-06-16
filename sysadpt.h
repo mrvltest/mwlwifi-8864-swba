@@ -28,7 +28,11 @@
 
 #define SYSADPT_TX_WMM_QUEUES          4
 
+#ifdef SWBA_SUPPORT
+#define SYSADPT_TX_AMPDU_QUEUES        63
+#else
 #define SYSADPT_TX_AMPDU_QUEUES        4
+#endif
 
 #define SYSADPT_NUM_OF_AP              16
 

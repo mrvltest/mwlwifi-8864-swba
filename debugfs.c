@@ -310,6 +310,8 @@ static ssize_t mwl_debugfs_ampdu_read(struct file *file, char __user *ubuf,
 	spin_lock_bh(&priv->stream_lock);
 	for (i = 0; i < SYSADPT_TX_AMPDU_QUEUES; i++) {
 		stream = &priv->ampdu[i];
+		if (stream->state == AMPDU_NO_STREAM)
+			continue;
 		len += scnprintf(p + len, size - len, "stream: %d\n", i);
 		len += scnprintf(p + len, size - len, "idx: %u\n", stream->idx);
 		len += scnprintf(p + len, size - len,

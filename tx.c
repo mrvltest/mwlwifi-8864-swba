@@ -882,9 +882,14 @@ void mwl_tx_xmit(struct ieee80211_hw *hw,
 					return;
 				}
 
+#ifdef SWBA_SUPPORT
+				txpriority =
+					(SYSADPT_TX_WMM_QUEUES + stream->idx);
+#else
 				txpriority =
 					(SYSADPT_TX_WMM_QUEUES + stream->idx) %
 					SYSADPT_TOTAL_HW_QUEUES;
+#endif
 			} else if (stream->state == AMPDU_STREAM_NEW) {
 				/* We get here if the driver sends us packets
 				 * after we've initiated a stream, but before
@@ -913,12 +918,19 @@ void mwl_tx_xmit(struct ieee80211_hw *hw,
 				return;
 			}
 		} else {
+#ifdef SWBA_SUPPORT
+			if (mwl_tx_tid_queue_mapping(tid) !=
+			    IEEE80211_AC_VO) {
+#endif
 			if (mwl_fwcmd_ampdu_allowed(sta, tid)) {
 				stream = mwl_fwcmd_add_stream(hw, sta, tid);
 
 				if (stream)
 					start_ba_session = true;
 			}
+#ifdef SWBA_SUPPORT
+			}
+#endif
 		}
 
 		spin_unlock_bh(&priv->stream_lock);
